@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;demo_program_baremetal/src/lscriptold.ld&apos; to &apos;lscriptold.txt&apos;" description="Rename resource &apos;lscriptold.ld&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/lscriptold.ld" name="lscriptold.txt" stamp="1509966338293" updateReferences="true"/>
+</session>

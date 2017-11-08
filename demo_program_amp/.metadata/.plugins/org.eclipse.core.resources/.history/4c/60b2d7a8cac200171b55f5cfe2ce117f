@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <stdint.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <stdlib.h>
+
+#define COMM_BASE_ADDR 0xFFFF8000
+#define COMM_FLAG_OFFSET 0x00
+#define COMM_DATA_OFFSET 0x04
+#define PAGE_SIZE ((size_t)getpagesize())
+#define PAGE_MASK ((uint64_t)(long)~(PAGE_SIZE - 1))
+#define MAX_CHAR 5
+
+int main(int argc, char **argv) 
+{
+	FILE *fp;
+	int fd,unmapmm,closefd;
+	char* filename;
+	volatile uint8_t *mm;
+	uint32_t value;
+	uint64_t offset;
+	char number[MAX_CHAR];
+
+	filename = argv[1];
+	
+	fp = fopen(filename,"r");
+	if (fp == NULL) {
+		fprintf(stderr, "Could not open file %s : (%d)\n",filename, errno);
+		return 1;
+	}
+	
+	fscanf(fp,"%s",number);
+	value = strtoull(number,NULL,10);
+
+    fd = open("/dev/mem", O_RDWR | O_SYNC);
+    if (fd < 0) {
+        fprintf(stderr, "failed to open /dev/mem : (%d)\n", errno);
+        return 1;
+    }
+
+//    base = BASE_ADDR & PAGE_MASK;
+//    offset = (BASE_ADDR & ~PAGE_MASK);
+
+    mm = mmap(NULL, PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, COMM_BASE_ADDR);
+    if (mm == MAP_FAILED) {
+        fprintf(stderr, "mmap failed : (%d)\n",
+                errno);
+        return 1;
+    }
+
+//    offset = ~PAGE_MASK;
+    *(volatile uint32_t *)(mm + offset) = value;
+
+    unmapmm = munmap((void *)mm, PAGE_SIZE);
+    if (unmapmm == -1) {
+    	printf("munmap failed.\n");
+    	return 1;
+    }
+
+	closefd = close(fd);
+	if (closefd == -1) {
+		printf("mem close failed.\n");
+		return 1;
+	}
+
+	return 0;
+}

@@ -1,0 +1,52 @@
+#define COMM_BASE_ADDR 0xFFFF8000
+#define COMM_FLAG_LINUX_OFFSET 0x00 //set 1 if data from Linux sent
+#define COMM_DATA_LINUX_OFFSET 0x04 //Linux data location
+#define COMM_FLAG_BAREMETAL_OFFSET 0x08 //set 1 if data from baremetal sent
+#define COMM_DATA_BAREMETAL_OFFSET 0x0C //Baremetal data location
+
+
+
+/**
+ * Taken from XAPP1078
+ * Modified DCacheFlush to prevent L2 Cache controller access
+ */
+void MyXil_DCacheFlush(void)
+{
+	Xil_L1DCacheFlush();
+	//Xil_L2CacheFlush();
+}
+
+/**
+ * Taken from XAPP1078
+ * Modified SetTlbAttributes to call MyXil_DCacheFlush in order
+ * to prevelt L2 Cache controller accesses
+ */
+void MyXil_SetTlbAttributes(u32 addr, u32 attrib)
+{
+	u32 *ptr;
+	u32 section;
+
+	mtcp(XREG_CP15_INVAL_UTLB_UNLOCKED, 0);
+	dsb();
+
+	mtcp(XREG_CP15_INVAL_BRANCH_ARRAY, 0);
+	dsb();
+	MyXil_DCacheFlush();
+
+	section = addr / 0x100000;
+	ptr = &MMUTable + section;
+	*ptr = (addr & 0xFFF00000) | attrib;
+	dsb();
+}
+
+
+int main() {
+	// Disable L1 cache for OCM
+	MyXil_SetTlbAttributes(0xFFFF0000,0x04de2);		// S=b0 TEX=b100 AP=b11, Domain=b1111, C=b0, B=b0
+
+	while(1) {
+		if (COMM_BASE_ADDR+COMM_FLAG_LINUX_OFFSET) {
+
+		}
+	}
+}

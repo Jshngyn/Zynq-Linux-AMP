@@ -1,0 +1,6 @@
+#define COMM_BASE_ADDR 0xFFFF8000
+#define COMM_FLAG_LINUX_OFFSET 0x00 //set 1 if data from Linux sent
+#define COMM_DATA_LINUX_OFFSET 0x04 //Linux data location
+#define COMM_FLAG_BAREMETAL_OFFSET 0x08 //set 1 if data from baremetal sent
+#define COMM_DATA_BAREMETAL_OFFSET 0x0C //Baremetal data location
+

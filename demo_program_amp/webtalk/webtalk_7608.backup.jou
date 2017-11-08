@@ -1,0 +1,12 @@
+#-----------------------------------------------------------
+# Webtalk v2017.1 (64-bit)
+# SW Build 1846317 on Fri Apr 14 18:54:47 MDT 2017
+# 
+# Start of session at: Fri Nov  3 19:13:01 2017
+# Process ID: 7608
+# Current directory: /home/josh/xilinxprojects/amphelloworld/webtalk
+# Command line: wbtcv -mode batch -source sdk_webtalk.tcl
+# Log file: /home/josh/xilinxprojects/amphelloworld/webtalk/webtalk.log
+# Journal file: /home/josh/xilinxprojects/amphelloworld/webtalk/webtalk.jou
+#-----------------------------------------------------------
+source sdk_webtalk.tcl

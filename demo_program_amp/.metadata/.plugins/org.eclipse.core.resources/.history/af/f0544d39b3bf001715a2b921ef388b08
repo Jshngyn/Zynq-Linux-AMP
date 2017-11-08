@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <stdint.h>
+#include <unistd.h>
+#include <sys/mman.h>
+
+#define BASE_ADDR 0xFFFF8000
+#define PAGE_SIZE ((size_t)getpagesize())
+#define PAGE_MASK ((uint64_t)(long)~(PAGE_SIZE - 1))
+
+
+int main(int argc, char **argv) 
+{
+	int fd;
+	char* filename;
+	volatile uint8_t *mm;
+
+
+	filename = argv[1];
+	
+	
+    fd = open("/dev/mem", O_RDWR | O_SYNC);
+    if (fd < 0) {
+        fprintf(stderr, "failed to open /dev/mem : (%d)\n", errno);
+        return 1;
+    }
+
+    mm = mmap(NULL, PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, BASE_ADDR & PAGE_MASK);
+    if (mm == MAP_FAILED) {
+        fprintf(stderr, "mmap64(0x%x@0x%lx) failed (%d)\n",
+                PAGE_SIZE, BASE_ADDR, errno);
+        return 1;
+    }
+
+
+	close(fd);
+
+
+
+	return 0;
+}
